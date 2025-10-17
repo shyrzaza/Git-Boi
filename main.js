@@ -95,12 +95,18 @@ function createWindow () {
         mainWindow = null;
     });
 
+    // Initialize with larger default dimensions
     ptyProcess = pty.spawn(shell, [], {
         name: 'xterm-color',
-        cols: 80,
-        rows: 30,
+        cols: 120,
+        rows: 40,
         cwd: process.env.HOME,
         env: process.env
+    });
+
+    // Add resize handler
+    ipcMain.on('terminal.resize', (event, size) => {
+        ptyProcess.resize(size.cols, size.rows);
     });
 
     ptyProcess.on('data', function(data) {
